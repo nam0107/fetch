@@ -1,6 +1,7 @@
 const sequelize = require('sequelize');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const bcrypt = require('bcrypt');
 const User = require('../../models').User;
 const Role = require('../../models').Role;
@@ -12,25 +13,50 @@ function comparePassword(password, has_password) {
 };
 
 //login
-exports.login = function (req, res) {
-    User.findOne({ where: { user_name: req.body.user_name } }).then(user => {
-        if (!user) {
-            console.log("khong co user nay");
-        } else {
-            if (comparePassword(req.body.password, user.password)) {
-                const sign = {
-                    token: jwt.sign({
-                        user_name: user.user_name,
-                        _id: user.user_id,
-                        active: 0
-                    }, 'secretkey') // secretKey
-                };
-                res.json(sign);
-            } else {
-                console.log("mat khau khong chinh xac");
-            }
+exports.login = function (req, res, next) {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+ 
+        // console.log(err);
+        if (err || !user) {
+            return res.status(400).json({
+                message: info ? info.message : 'Login failed',
+                user: user
+            });
         }
-    });
+
+        req.login(user, { session: false }, (err) => {
+            if (err) {
+                res.send(err);
+            }
+            
+            const token = jwt.sign({
+                mail: user.email,
+                user_name: user.user_name,
+                id: user.id
+            }, 'ahihi');
+
+            return res.json({ user, token });
+        });
+    })
+        (req, res);
+    // User.findOne({ where: { user_name: req.body.user_name } }).then(user => {
+    //     if (!user) {
+    //         console.log("khong co user nay");
+    //     } else {
+    //         if (comparePassword(req.body.password, user.password)) {
+    //             const sign = {
+    //                 token: jwt.sign({
+    //                     user_name: user.user_name,
+    //                     _id: user.user_id,
+    //                     active: 0
+    //                 }, 'secretkey') // secretKey
+    //             };
+    //             res.json(sign);
+    //         } else {
+    //             console.log("mat khau khong chinh xac");
+    //         }
+    //     }
+    // });
 };
 
 // register
@@ -54,6 +80,8 @@ exports.register = function (req, res) {
                     email: req.body.email, // email unique
                     password: hash_password,
                     status: 1
+                }).then(user => {
+                    res.send("Done!");
                 })
             })
         }

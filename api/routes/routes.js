@@ -1,5 +1,8 @@
 const { check, validationResult } = require('express-validator');
 const validator = require('../../validator/validator.js');
+const SchemaValidator = require('../../validator/SchemasValidator');//validator
+const passport    = require('passport');
+const validateRequest = SchemaValidator(true);
 const multer = require('multer'); // up file
 const storage = multer.diskStorage({
 	destination: function(req, file, cb){
@@ -18,9 +21,9 @@ module.exports = function (app) {
 	app.route('/users/login')
 		.post(userController.login);
 	app.route('/users/register')
-		.post(validator.validatorUser, userController.register);
+		.post(validateRequest, userController.register);
 	app.route('/users')
-		.get(userController.getAllUser);
+		.get(passport.authenticate('jwt', {session: false}),userController.getAllUser);
 	app.route('/users/:user_id')
 		.delete(userController.delUser)
 		.get(userController.getUser)

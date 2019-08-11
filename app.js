@@ -7,10 +7,11 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use('/user', passport.authenticate('jwt', {session: false}), user);
 
 const User = require('./models').User;
 const Book = require('./models').Book;
-
+require(__dirname + "/api/controllers/passport.js");
 routes(app);
 
 // Comment.findOne({
