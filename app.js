@@ -14,6 +14,10 @@ const Book = require('./models').Book;
 require(__dirname + "/api/controllers/passport.js");
 routes(app);
 
+app.get('/', (req, res) => {
+    res.send('hello hihi!');
+})
+
 // Comment.findOne({
 //     // include: [Role],
 //     raw: true

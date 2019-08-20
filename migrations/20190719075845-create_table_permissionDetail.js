@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'PermissionDetails',
+      'permissiondetails',
       {
         permission_id: {
           type: Sequelize.INTEGER,
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('PermissionDetails');
+    return queryInterface.dropTable('permissiondetails');
   }
 };

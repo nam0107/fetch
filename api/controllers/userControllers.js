@@ -2,7 +2,7 @@ const sequelize = require('sequelize');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 const User = require('../../models').User;
 const Role = require('../../models').Role;
 
